@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - ALETECH</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .welcome {
+            padding: 35px 7%;
+        }
+
+        .welcome h2 {
+            color: #15345b;
+            margin-bottom: 10px;
+        }
+
+        .dashboard {
+            padding: 10px 7% 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #15345b;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .card a {
+            display: inline-block;
+            background: #15345b;
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media(max-width: 600px) {
+            .welcome {
+                padding: 25px 5%;
+            }
+
+            .dashboard {
+                padding: 10px 5% 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Teacher Dashboard</p>
+</header>
+<nav style="background: #102947; padding: 15px; text-align: right;">
+    <a href="index.html" style="color: white; margin-right: 20px; text-decoration: none;">Home</a>
+    <a href="login.html" style="color: white; text-decoration: none;">Logout</a>
+</nav>
+
+<section class="welcome">
+    <h2>Welcome, Teacher!</h2>
+    <p>Manage your lessons and support student learning.</p>
+</section>
+
+<section class="dashboard">
+
+    <div class="card">
+        <h3>My Subjects</h3>
+        <p>View and manage your assigned subjects.</p>
+        <a href="#">Manage Subjects</a>
+    </div>
+
+    <div class="card">
+        <h3>Schedule Live Lessons</h3>
+        <p>Organise online classes for your students.</p>
+        <a href="#">Schedule Lesson</a>
+    </div>
+
+    <div class="card">
+        <h3>Recorded Lessons</h3>
+        <p>Upload recorded lessons for students.</p>
+        <a href="#">Upload Videos</a>
+    </div>
+
+    <div class="card">
+        <h3>Learning Notes</h3>
+        <p>Prepare and upload learning materials.</p>
+        <a href="#">Upload Notes</a>
+    </div>
+
+    <div class="card">
+        <h3>Assignments</h3>
+        <p>Create assignments and review student submissions.</p>
+        <a href="#">Manage Assignments</a>
+    </div>
+
+    <div class="card">
+        <h3>Examinations & Quizzes</h3>
+        <p>Create revision tests and examinations.</p>
+        <a href="#">Create Quiz</a>
+    </div>
+
+    <div class="card">
+        <h3>Student Performance</h3>
+        <p>Review student progress and examination results.</p>
+        <a href="#">View Performance</a>
+    </div>
+
+    <div class="card">
+        <h3>Student Questions</h3>
+        <p>Respond to questions from your students.</p>
+        <a href="#">View Questions</a>
+    </div>
+
+</section>
+
+<footer>
+    <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+</footer>
+
+</body>
+</html>

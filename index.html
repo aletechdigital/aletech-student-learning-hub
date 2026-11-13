@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALETECH STUDENT LEARNING HUB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 25px 8%;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        nav {
+            background: #0d2440;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #15345b, #2874a6);
+            color: white;
+        }
+
+        .hero h2 {
+            font-size: 38px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .hero button {
+            background: #f5b942;
+            color: #15345b;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .features {
+            padding: 50px 8%;
+            text-align: center;
+        }
+
+        .features h2 {
+            margin-bottom: 30px;
+            color: #15345b;
+        }
+
+        .feature-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .feature {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .feature h3 {
+            color: #15345b;
+            margin-bottom: 12px;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            nav a {
+                display: inline-block;
+                margin: 8px;
+            }
+
+            .hero h2 {
+                font-size: 28px;
+            }
+        .join-button, .login-button {
+    display: inline-block;
+    padding: 15px 25px;
+    margin: 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.join-button {
+    background: #f5b942;
+    color: #15345b;
+}
+
+.login-button {
+    background: white;
+    color: #15345b;
+}
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Learn • Connect • Excel</p>
+</header>
+
+<nav>
+    <a href="#">Home</a>
+    <a href="#features">Learning</a>
+    <a href="#about">About Us</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<section class="hero">
+    <h2>Welcome to ALETECH Learning Hub</h2>
+    <p>Your online learning centre for CBC and 8-4-4 students.</p>
+    <a href="register.html" class="join-button">Join ALETECH</a>
+<a href="login.html" class="login-button">Student Login</a>
+</section>
+
+<section class="features" id="features">
+    <h2>Explore Our Learning Services</h2>
+
+    <div class="feature-container">
+
+        <div class="feature">
+            <h3>Live Lessons</h3>
+            <p>Attend online lessons with experienced teachers.</p>
+        </div>
+
+        <div class="feature">
+            <h3>Recorded Lessons</h3>
+            <p>Watch recorded lessons whenever you need revision.</p>
+        </div>
+
+        <div class="feature">
+            <h3>Learning Notes</h3>
+            <p>Access notes and learning materials for your subjects.</p>
+        </div>
+
+        <div class="feature">
+            <h3>Online Examinations</h3>
+            <p>Test your understanding through quizzes and examinations.</p>
+        </div>
+
+    </div>
+</section>
+
+<section class="features" id="about">
+    <h2>About ALETECH</h2>
+    <p>
+        ALETECH STUDENT LEARNING HUB provides online learning
+        support for secondary school students through live lessons,
+        recorded classes, revision materials and teacher support.
+    </p>
+</section>
+
+<footer id="contact">
+    <p>ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+    <p>&copy; 2026 ALETECH. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

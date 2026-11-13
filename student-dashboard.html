@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - ALETECH</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .welcome {
+            padding: 30px 7%;
+        }
+
+        .welcome h2 {
+            color: #15345b;
+            margin-bottom: 10px;
+        }
+
+        .dashboard {
+            padding: 10px 7% 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #15345b;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .card a {
+            display: inline-block;
+            background: #15345b;
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+        }
+
+        .subscription {
+            margin: 0 7% 35px;
+            background: #e3efff;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media(max-width: 600px) {
+            .welcome {
+                padding: 25px 5%;
+            }
+
+            .dashboard {
+                padding: 10px 5% 30px;
+            }
+
+            .subscription {
+                margin: 0 5% 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Student Dashboard</p>
+</header>
+<nav style="background: #102947; padding: 15px; text-align: right;">
+    <a href="index.html" style="color: white; margin-right: 20px; text-decoration: none;">Home</a>
+    <a href="login.html" style="color: white; text-decoration: none;">Logout</a>
+</nav>
+
+<section class="welcome">
+    <h2>Welcome, Student!</h2>
+    <p>Your learning journey starts here. Learn, practise and excel.</p>
+</section>
+
+<section class="subscription">
+    <h3>My Subscription</h3>
+    <p>Monthly Subscription: KSh 1,500</p>
+    <p>Status: Awaiting account activation</p>
+</section>
+
+<section class="dashboard">
+
+    <div class="card">
+        <h3>My Subjects</h3>
+        <p>Access your curriculum subjects and learning materials.</p>
+        <a href="#">View Subjects</a>
+    </div>
+
+    <div class="card">
+        <h3>Live Lessons</h3>
+        <p>Join scheduled online classes with your teachers.</p>
+        <a href="#">Join Lessons</a>
+    </div>
+
+    <div class="card">
+        <h3>Recorded Lessons</h3>
+        <p>Watch recorded lessons for revision and practice.</p>
+        <a href="#">Watch Lessons</a>
+    </div>
+
+    <div class="card">
+        <h3>Learning Notes</h3>
+        <p>Read and access your subject notes.</p>
+        <a href="#">Open Notes</a>
+    </div>
+
+    <div class="card">
+        <h3>Assignments</h3>
+        <p>View and complete assignments from your teachers.</p>
+        <a href="#">View Assignments</a>
+    </div>
+
+    <div class="card">
+        <h3>Online Examinations</h3>
+        <p>Practise with quizzes and online examinations.</p>
+        <a href="#">Start Practice</a>
+    </div>
+
+    <div class="card">
+        <h3>My Results</h3>
+        <p>Monitor your examination results and progress.</p>
+        <a href="#">View Results</a>
+    </div>
+
+    <div class="card">
+        <h3>Teacher Support</h3>
+        <p>Get academic guidance from your teachers.</p>
+        <a href="#">Contact Teacher</a>
+    </div>
+
+</section>
+
+<footer>
+    <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+</footer>
+
+</body>
+</html>

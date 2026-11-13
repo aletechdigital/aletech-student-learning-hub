@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - ALETECH</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            background: white;
+            max-width: 550px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #15345b;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #15345b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2874a6;
+        }
+
+        a {
+            color: #15345b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>ALETECH</h1>
+    <p>STUDENT LEARNING HUB</p>
+
+    <h2>Student Registration</h2>
+    <p>Create your student account.</p>
+
+    <form id="registrationForm">
+
+        <label>Full Name</label>
+        <input type="text" required placeholder="Enter your full name">
+
+        <label>Email Address</label>
+        <input type="email" required placeholder="Enter your email">
+
+        <label>Phone Number</label>
+        <input type="tel" required placeholder="Enter your phone number">
+
+        <label>Curriculum</label>
+        <select id="curriculum" required>
+            <option value="">Select curriculum</option>
+            <option value="CBC">CBC Senior School</option>
+            <option value="844">8-4-4 System</option>
+        </select>
+
+        <label>Grade / Form</label>
+        <select required>
+            <option value="">Select grade or form</option>
+            <option>Grade 10</option>
+            <option>Grade 11</option>
+            <option>Grade 12</option>
+            <option>Form 1</option>
+            <option>Form 2</option>
+            <option>Form 3</option>
+            <option>Form 4</option>
+        </select>
+
+        <label>Create Password</label>
+        <input type="password" required minlength="8"
+        placeholder="Create a password">
+
+        <button type="submit">Register</button>
+
+    </form>
+
+    <p>Already registered? <a href="login.html">Login here</a></p>
+
+    <p><a href="index.html">Back to Homepage</a></p>
+
+</div>
+
+<script>
+document.getElementById("registrationForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    alert("Registration form design completed! Account creation will be connected to our secure database later.");
+});
+</script>
+
+</body>
+</html>

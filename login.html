@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - ALETECH</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 40px 15px;
+        }
+
+        .login-container {
+            max-width: 430px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: #15345b;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            background: #15345b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2874a6;
+        }
+
+        a {
+            color: #15345b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h1>ALETECH</h1>
+    <p>STUDENT LEARNING HUB</p>
+
+    <h2>Student Login</h2>
+    <p>Welcome back! Access your learning account.</p>
+
+    <form id="loginForm">
+
+        <label>Email Address</label>
+        <input type="email" required placeholder="Enter your email">
+
+        <label>Password</label>
+        <input type="password" required placeholder="Enter your password">
+
+        <button type="submit">Login</button>
+
+    </form>
+
+    <p>Forgot your password? <a href="mailto:aletechcollege@gmail.com">Contact the administrator</a></p>
+
+    <p>New student? <a href="register.html">Register here</a></p>
+
+    <p><a href="index.html">Back to Homepage</a></p>
+
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    alert("Login system will be connected to our secure database later.");
+});
+</script>
+
+</body>
+</html>
