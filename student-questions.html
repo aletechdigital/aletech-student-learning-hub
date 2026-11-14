@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Questions - ALETECH</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        nav {
+            background: #102947;
+            padding: 15px;
+            text-align: right;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .container {
+            padding: 35px 7%;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            max-width: 650px;
+            margin-top: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            min-height: 120px;
+        }
+
+        button {
+            background: #15345b;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .notice {
+            margin-top: 20px;
+            color: #765b19;
+            line-height: 1.5;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Student Questions</p>
+</header>
+
+<nav>
+    <a href="teacher-dashboard.html">Dashboard</a>
+    <a href="index.html">Home</a>
+</nav>
+
+<section class="container">
+
+    <h2>Student Questions and Support</h2>
+    <p>Prepare to respond to questions from your students.</p>
+
+    <div class="question-card">
+
+        <h3>Question Management</h3>
+
+        <p style="margin-top: 15px; line-height: 1.5;">
+            Student questions and teacher responses will appear here once the messaging system is connected.
+        </p>
+
+        <form onsubmit="event.preventDefault(); alert('Teacher responses will be activated when the secure system is connected.');">
+
+            <label>Subject</label>
+            <select required>
+                <option value="">Select Subject</option>
+                <option>Mathematics</option>
+                <option>English</option>
+                <option>Kiswahili</option>
+                <option>Biology</option>
+                <option>Chemistry</option>
+                <option>Physics</option>
+            </select>
+
+            <label>Teacher Response</label>
+            <textarea placeholder="Write your response here..." required></textarea>
+
+            <button type="submit">Send Response</button>
+
+        </form>
+
+        <p class="notice">
+            Note: Messages and responses will not be saved or sent until the secure messaging system is connected.
+        </p>
+
+    </div>
+
+</section>
+
+<footer>
+    <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Subjects - ALETECH</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        nav {
+            background: #102947;
+            padding: 15px;
+            text-align: right;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .container {
+            padding: 35px 7%;
+        }
+
+        .subject-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .subject {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .subject h3 {
+            color: #15345b;
+            margin-bottom: 12px;
+        }
+
+        .subject p {
+            line-height: 1.5;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Teacher Subjects</p>
+</header>
+
+<nav>
+    <a href="teacher-dashboard.html">Dashboard</a>
+    <a href="index.html">Home</a>
+</nav>
+
+<section class="container">
+
+    <h2>My Assigned Subjects</h2>
+    <p>View the subjects available for teaching.</p>
+
+    <div class="subject-container">
+
+        <div class="subject">
+            <h3>Mathematics</h3>
+            <p>Manage Mathematics lessons and learning materials.</p>
+        </div>
+
+        <div class="subject">
+            <h3>English</h3>
+            <p>Manage English lessons and learning materials.</p>
+        </div>
+
+        <div class="subject">
+            <h3>Kiswahili</h3>
+            <p>Manage Kiswahili lessons and learning materials.</p>
+        </div>
+
+        <div class="subject">
+            <h3>Biology</h3>
+            <p>Manage Biology lessons and learning materials.</p>
+        </div>
+
+        <div class="subject">
+            <h3>Chemistry</h3>
+            <p>Manage Chemistry lessons and learning materials.</p>
+        </div>
+
+        <div class="subject">
+            <h3>Physics</h3>
+            <p>Manage Physics lessons and learning materials.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<footer>
+    <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+</footer>
+
+</body>
+</html>

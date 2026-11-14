@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Quizzes - ALETECH</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        nav {
+            background: #102947;
+            padding: 15px;
+            text-align: right;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .container {
+            padding: 35px 7%;
+        }
+
+        .quiz-form {
+            background: white;
+            padding: 25px;
+            max-width: 650px;
+            margin-top: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            min-height: 120px;
+        }
+
+        button {
+            background: #15345b;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .notice {
+            margin-top: 20px;
+            color: #765b19;
+            line-height: 1.5;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Examinations and Quizzes</p>
+</header>
+
+<nav>
+    <a href="teacher-dashboard.html">Dashboard</a>
+    <a href="index.html">Home</a>
+</nav>
+
+<section class="container">
+
+    <h2>Create a Quiz or Examination</h2>
+    <p>Prepare assessments for your students.</p>
+
+    <div class="quiz-form">
+
+        <form onsubmit="event.preventDefault(); alert('Quiz creation will be activated when the secure system is connected.');">
+
+            <label>Quiz / Examination Title</label>
+            <input type="text" placeholder="Enter assessment title" required>
+
+            <label>Subject</label>
+            <select required>
+                <option value="">Select Subject</option>
+                <option>Mathematics</option>
+                <option>English</option>
+                <option>Kiswahili</option>
+                <option>Biology</option>
+                <option>Chemistry</option>
+                <option>Physics</option>
+            </select>
+
+            <label>Class / Grade</label>
+            <select required>
+                <option value="">Select Class</option>
+                <option>Grade 10</option>
+                <option>Grade 11</option>
+                <option>Grade 12</option>
+                <option>Form 1</option>
+                <option>Form 2</option>
+                <option>Form 3</option>
+                <option>Form 4</option>
+            </select>
+
+            <label>Assessment Type</label>
+            <select required>
+                <option value="">Select Type</option>
+                <option>Practice Quiz</option>
+                <option>Topic Test</option>
+                <option>Mid-Term Examination</option>
+                <option>End-Term Examination</option>
+            </select>
+
+            <label>Assessment Instructions</label>
+            <textarea placeholder="Enter instructions for students"></textarea>
+
+            <label>Assessment Date</label>
+            <input type="date" required>
+
+            <label>Time Allowed (Minutes)</label>
+            <input type="number" min="1" placeholder="e.g. 60" required>
+
+            <button type="submit">Create Assessment</button>
+
+        </form>
+
+        <p class="notice">
+            Note: Creating, saving and marking online assessments will be activated when the secure system is connected.
+        </p>
+
+    </div>
+
+</section>
+
+<footer>
+    <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+</footer>
+
+</body>
+</html>
