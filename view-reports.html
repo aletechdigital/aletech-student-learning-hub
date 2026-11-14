@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Reports - ALETECH</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        nav {
+            background: #102947;
+            padding: 15px;
+            text-align: right;
+        }
+
+        nav a {
+            color: white;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+
+        .container {
+            padding: 30px 7%;
+        }
+
+        h2 {
+            color: #15345b;
+            margin-bottom: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card p {
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #15345b;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 18px;
+            cursor: pointer;
+        }
+
+        .notice {
+            background: #fff4d6;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Platform Reports</p>
+</header>
+
+<nav>
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="index.html">Home</a>
+</nav>
+
+<div class="container">
+
+    <h2>Reports and Performance Monitoring</h2>
+    <p>Monitor learning activities and platform performance.</p>
+
+    <div class="card">
+        <h3>Available Report Categories</h3>
+        <p>Student Reports – Student registrations and learning progress.</p>
+        <p>Teacher Reports – Teacher activities and lesson schedules.</p>
+        <p>Subscription Reports – Student subscription records.</p>
+        <p>Payment Reports – Verified M-Pesa payment records.</p>
+        <p>Examination Reports – Student assessment results.</p>
+    </div>
+
+    <div class="card">
+        <h3>Generate Report Preview</h3>
+
+        <form onsubmit="event.preventDefault(); alert('Report generation will be activated when the database is connected.');">
+
+            <label>Report Category</label>
+            <select required>
+                <option value="">Select Report Category</option>
+                <option>Student Reports</option>
+                <option>Teacher Reports</option>
+                <option>Subscription Reports</option>
+                <option>Payment Reports</option>
+                <option>Examination Reports</option>
+            </select>
+
+            <label>Report Period</label>
+            <select required>
+                <option value="">Select Report Period</option>
+                <option>Daily</option>
+                <option>Weekly</option>
+                <option>Monthly</option>
+                <option>Yearly</option>
+            </select>
+
+            <button type="submit">Generate Report</button>
+
+        </form>
+    </div>
+
+    <div class="notice">
+        <strong>Note:</strong> This is a report page preview. Actual reports, statistics and downloads will become available after secure database integration.
+    </div>
+
+</div>
+
+<footer>
+    <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+</footer>
+
+</body>
+</html>
