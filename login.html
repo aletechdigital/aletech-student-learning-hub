@@ -84,17 +84,19 @@
 
     <form id="loginForm">
 
-        <label>Email Address</label>
-        <input type="email" required placeholder="Enter your email">
+    <label>Email Address</label>
+    <input type="email" id="email" required
+    placeholder="Enter your email">
 
-        <label>Password</label>
-        <input type="password" required placeholder="Enter your password">
+    <label>Password</label>
+    <input type="password" id="password" required
+    placeholder="Enter your password">
 
-        <button type="submit">Login</button>
+    <button type="submit">Login</button>
 
-    </form>
+</form>
 
-    <p>Forgot your password? <a href="mailto:aletechcollege@gmail.com">Contact the administrator</a></p>
+    <p>Forgot your password? <a href="reset-password.html">Reset Password</a></p>
 
     <p>New student? <a href="register.html">Register here</a></p>
 
@@ -102,12 +104,64 @@
 
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-document.getElementById("loginForm").addEventListener("submit", function(event) {
+const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+window.supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
-    alert("Login system will be connected to our secure database later.");
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+    });
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    const userId = data.user.id;
+
+    const { data: profile, error: profileError } = await window.supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("user_id", userId)
+        .single();
+
+    if (profileError || !profile) {
+        await window.supabaseClient.auth.signOut();
+        alert("Your account profile could not be found. Please contact the administrator.");
+        return;
+    }
+
+    if (profile.role === "student") {
+        window.location.href = "student-dashboard.html";
+    }
+    else if (profile.role === "teacher") {
+        window.location.href = "teacher-dashboard.html";
+    }
+    else if (profile.role === "administrator") {
+        window.location.href = "admin-dashboard.html";
+    }
+    else {
+        await window.supabaseClient.auth.signOut();
+        alert("Your account has an invalid role. Please contact the administrator.");
+    }
 });
 </script>
+
 
 </body>
 </html>
