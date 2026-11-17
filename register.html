@@ -82,43 +82,48 @@
     <h2>Student Registration</h2>
     <p>Create your student account.</p>
 
-    <form id="registrationForm">
+    
+<form id="registrationForm">
 
-        <label>Full Name</label>
-        <input type="text" required placeholder="Enter your full name">
+    <label>Full Name</label>
+    <input type="text" id="full_name" required
+    placeholder="Enter your full name">
 
-        <label>Email Address</label>
-        <input type="email" required placeholder="Enter your email">
+    <label>Email Address</label>
+    <input type="email" id="email" required
+    placeholder="Enter your email">
 
-        <label>Phone Number</label>
-        <input type="tel" required placeholder="Enter your phone number">
+    <label>Phone Number</label>
+    <input type="tel" id="phone" required
+    placeholder="Enter your phone number">
 
-        <label>Curriculum</label>
-        <select id="curriculum" required>
-            <option value="">Select curriculum</option>
-            <option value="CBC">CBC Senior School</option>
-            <option value="844">8-4-4 System</option>
-        </select>
+    <label>Curriculum</label>
+    <select id="curriculum" required>
+        <option value="">Select curriculum</option>
+        <option value="CBC">CBC Senior School</option>
+        <option value="844">8-4-4 System</option>
+    </select>
 
-        <label>Grade / Form</label>
-        <select required>
-            <option value="">Select grade or form</option>
-            <option>Grade 10</option>
-            <option>Grade 11</option>
-            <option>Grade 12</option>
-            <option>Form 1</option>
-            <option>Form 2</option>
-            <option>Form 3</option>
-            <option>Form 4</option>
-        </select>
+    <label>Grade / Form</label>
+    <select id="grade_or_form" required>
+        <option value="">Select grade or form</option>
+        <option>Grade 10</option>
+        <option>Grade 11</option>
+        <option>Grade 12</option>
+        <option>Form 1</option>
+        <option>Form 2</option>
+        <option>Form 3</option>
+        <option>Form 4</option>
+    </select>
 
-        <label>Create Password</label>
-        <input type="password" required minlength="8"
-        placeholder="Create a password">
+    <label>Create Password</label>
+    <input type="password" id="password" required
+    minlength="8" placeholder="Create a password">
 
-        <button type="submit">Register</button>
+    <button type="submit">Register</button>
 
-    </form>
+</form>
+
 
     <p>Already registered? <a href="login.html">Login here</a></p>
 
@@ -126,10 +131,48 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-document.getElementById("registrationForm").addEventListener("submit", function(event) {
+const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+window.supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+console.log("SUPABASE CLIENT CREATED");
+document.getElementById("registrationForm").addEventListener("submit", async function(event) {
     event.preventDefault();
-    alert("Registration form design completed! Account creation will be connected to our secure database later.");
+
+    const fullName = document.getElementById("full_name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const curriculum = document.getElementById("curriculum").value;
+    const gradeOrForm = document.getElementById("grade_or_form").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+    emailRedirectTo: "https://aletechdigital.github.io/aletech-student-learning-hub/",
+    data: {
+                full_name: fullName,
+                phone: phone,
+                curriculum: curriculum,
+                grade_or_form: gradeOrForm
+            }
+        }
+    });
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    alert("Registration submitted! Please check your email to confirm your account.");
+    document.getElementById("registrationForm").reset();
 });
 </script>
 
