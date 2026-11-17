@@ -160,5 +160,50 @@
     <p>Learn • Connect • Excel</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+async function checkTeacherAccess() {
+    const { data: { user }, error: userError } =
+        await client.auth.getUser();
+
+    if (userError || !user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const { data: profile, error: profileError } = await client
+        .from("profiles")
+        .select("role")
+        .eq("user_id", user.id)
+        .single();
+
+    if (profileError || !profile) {
+        await client.auth.signOut();
+        window.location.href = "login.html";
+        return;
+    }
+
+    if (profile.role === "student") {
+        window.location.href = "student-dashboard.html";
+    } else if (profile.role === "administrator") {
+        window.location.href = "admin-dashboard.html";
+    } else if (profile.role !== "teacher") {
+        await client.auth.signOut();
+        window.location.href = "login.html";
+    }
+}
+
+checkTeacherAccess();
+</script>
+
 </body>
 </html>
