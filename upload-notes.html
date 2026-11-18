@@ -92,6 +92,16 @@
             margin-top: 40px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+    const client = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+</script>
 </head>
 
 <body>
@@ -113,43 +123,55 @@
 
     <div class="upload-form">
 
-        <form onsubmit="event.preventDefault(); alert('Notes upload will be activated when the secure system is connected.');">
+        
+<form id="uploadForm">
 
-            <label>Topic / Notes Title</label>
-            <input type="text" placeholder="Enter notes title" required>
+    <label>Topic / Notes Title</label>
+    <input type="text" id="material_title"
+           placeholder="Enter notes title" required>
 
-            <label>Subject</label>
-            <select required>
-                <option value="">Select Subject</option>
-                <option>Mathematics</option>
-                <option>English</option>
-                <option>Kiswahili</option>
-                <option>Biology</option>
-                <option>Chemistry</option>
-                <option>Physics</option>
-            </select>
+    <label>Subject</label>
+    <select id="subject_name" required>
+        <option value="">Select Subject</option>
+        <option>Mathematics</option>
+        <option>English</option>
+        <option>Kiswahili</option>
+        <option>Biology</option>
+        <option>Chemistry</option>
+        <option>Physics</option>
+    </select>
 
-            <label>Class / Grade</label>
-            <select required>
-                <option value="">Select Class</option>
-                <option>Grade 10</option>
-                <option>Grade 11</option>
-                <option>Grade 12</option>
-                <option>Form 1</option>
-                <option>Form 2</option>
-                <option>Form 3</option>
-                <option>Form 4</option>
-            </select>
+    <label>Curriculum</label>
+    <select id="curriculum" required>
+        <option value="">Select Curriculum</option>
+        <option>Kenyan 8-4-4 Curriculum</option>
+        <option>Kenyan CBC Curriculum</option>
+    </select>
 
-            <label>Notes Description</label>
-            <textarea placeholder="Enter a short description of the notes"></textarea>
+    <label>Class / Grade</label>
+    <select id="grade_or_form" required>
+        <option value="">Select Class</option>
+        <option>Grade 10</option>
+        <option>Grade 11</option>
+        <option>Grade 12</option>
+        <option>Form 1</option>
+        <option>Form 2</option>
+        <option>Form 3</option>
+        <option>Form 4</option>
+    </select>
 
-            <label>Attach Notes File (PDF or Word)</label>
-            <input type="file" accept=".pdf,.doc,.docx">
+    <label>Notes Description</label>
+    <textarea id="description"
+              placeholder="Enter a short description of the notes"></textarea>
 
-            <button type="submit">Upload Notes</button>
+    <label>Attach Notes File (PDF or Word)</label>
+    <input type="file" id="notes_file"
+           accept=".pdf,.doc,.docx" required>
 
-        </form>
+    <button type="submit" id="uploadButton">Upload Notes</button>
+
+</form>
+
 
         <p class="notice">
             Note: File uploads and storage will be activated when the secure system is connected.
@@ -163,6 +185,105 @@
     <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
     <p>Learn • Connect • Excel</p>
 </footer>
+
+<script>
+document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const button = document.getElementById("uploadButton");
+    button.disabled = true;
+    button.textContent = "Uploading...";
+
+    let filePath = null;
+
+    try {
+        // Check logged-in teacher
+        const { data: { user }, error: authError } =
+            await client.auth.getUser();
+
+        if (authError || !user) {
+            throw new Error("Please log in before uploading notes.");
+        }
+
+        // Confirm teacher role
+        const { data: profile, error: profileError } = await client
+            .from("profiles")
+            .select("role")
+            .eq("user_id", user.id)
+            .single();
+
+        if (profileError || !profile || profile.role !== "teacher") {
+            throw new Error("Only registered teachers can upload notes.");
+        }
+
+        // Get form information
+        const title = document.getElementById("material_title").value.trim();
+        const subject = document.getElementById("subject_name").value;
+        const curriculum = document.getElementById("curriculum").value;
+        const grade = document.getElementById("grade_or_form").value;
+        const description = document.getElementById("description").value.trim();
+        const file = document.getElementById("notes_file").files[0];
+
+        if (!file) {
+            throw new Error("Please select a notes file.");
+        }
+
+        const extension = file.name.split(".").pop().toLowerCase();
+
+        if (!["pdf", "doc", "docx"].includes(extension)) {
+            throw new Error("Please upload a PDF or Word document.");
+        }
+
+        // Create a unique private storage path
+        filePath = user.id + "/" + crypto.randomUUID() + "." + extension;
+
+        // Upload file to private Storage bucket
+        const { error: uploadError } = await client.storage
+            .from("learning-notes")
+            .upload(filePath, file, {
+                upsert: false
+            });
+
+        if (uploadError) {
+            throw uploadError;
+        }
+
+        // Save material details in database
+        const { error: insertError } = await client
+            .from("learning_materials")
+            .insert({
+                material_title: title,
+                subject_name: subject,
+                curriculum: curriculum,
+                grade_or_form: grade,
+                description: description,
+                file_url: filePath,
+                created_by: user.id,
+                status: "pending"
+            });
+
+        if (insertError) {
+            await client.storage
+                .from("learning-notes")
+                .remove([filePath]);
+
+            filePath = null;
+            throw insertError;
+        }
+
+        alert("Notes uploaded successfully! They are awaiting administrator approval.");
+
+        document.getElementById("uploadForm").reset();
+
+    } catch (error) {
+        console.error("Upload error:", error);
+        alert("Upload failed: " + error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = "Upload Notes";
+    }
+});
+</script>
 
 </body>
 </html>
