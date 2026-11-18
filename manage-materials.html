@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Materials Management - ALETECH</title>
+    <title>Manage Learning Materials - ALETECH</title>
 
     <style>
         * {
@@ -34,8 +34,8 @@
 
         nav a {
             color: white;
-            margin-right: 20px;
             text-decoration: none;
+            margin-right: 20px;
         }
 
         .container {
@@ -44,51 +44,71 @@
 
         h2 {
             color: #15345b;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
-        .card {
+        .filters {
             background: white;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 8px;
             margin-top: 20px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
         }
 
-        .card p {
-            line-height: 1.6;
-            margin: 12px 0;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 7px;
-            font-weight: bold;
-        }
-
-        input, select {
+        select {
+            padding: 10px;
             width: 100%;
-            padding: 12px;
+            margin-top: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
-        button {
-            background: #15345b;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            margin-top: 18px;
-            cursor: pointer;
+        .material-card {
+            background: white;
+            padding: 22px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
         }
 
-        .notice {
-            background: #fff4d6;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
+        .material-card p {
+            margin: 10px 0;
             line-height: 1.5;
+        }
+
+        .status {
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        button {
+            padding: 11px 17px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin: 8px 8px 0 0;
+        }
+
+        .view-btn {
+            background: #15345b;
+        }
+
+        .approve-btn {
+            background: #16803c;
+        }
+
+        .reject-btn {
+            background: #c62828;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
         }
 
         footer {
@@ -98,6 +118,16 @@
             padding: 20px;
             margin-top: 40px;
         }
+
+        @media(max-width: 600px) {
+            .container {
+                padding: 25px 5%;
+            }
+
+            nav {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 
@@ -105,7 +135,7 @@
 
 <header>
     <h1>ALETECH STUDENT LEARNING HUB</h1>
-    <p>Learning Materials Management</p>
+    <p>Administrator - Learning Materials Approval</p>
 </header>
 
 <nav>
@@ -116,46 +146,23 @@
 <div class="container">
 
     <h2>Manage Learning Materials</h2>
-    <p>Oversee educational notes, recorded lessons and revision resources.</p>
 
-    <div class="card">
-        <h3>Available Material Categories</h3>
-        <p>Learning Notes – PDF and Word documents.</p>
-        <p>Recorded Lessons – Educational video content.</p>
-        <p>Revision Materials – Practice questions and learning resources.</p>
+    <p>Review learning materials uploaded by teachers and approve or reject them.</p>
+
+    <div class="filters">
+        <label for="statusFilter"><strong>Filter by Approval Status</strong></label>
+
+        <select id="statusFilter">
+            <option value="all">All Materials</option>
+            <option value="pending">Awaiting Approval</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
     </div>
 
-    <div class="card">
-        <h3>Search Learning Material</h3>
+    <p id="message">Loading learning materials...</p>
 
-        <form onsubmit="event.preventDefault(); alert('Material search will be activated when the database is connected.');">
-
-            <label>Material Title</label>
-            <input type="text" placeholder="Enter material title">
-
-            <label>Material Type</label>
-            <select>
-                <option value="">Select Material Type</option>
-                <option>Learning Notes</option>
-                <option>Recorded Lessons</option>
-                <option>Revision Materials</option>
-            </select>
-
-            <label>Curriculum</label>
-            <select>
-                <option value="">Select Curriculum</option>
-                <option>CBC Senior School</option>
-                <option>8-4-4 Curriculum</option>
-            </select>
-
-            <button type="submit">Search Material</button>
-
-        </form>
-    </div>
-
-    <div class="notice">
-        <strong>Note:</strong> Actual material records, uploads, editing and removal will become available after secure database and file-storage integration.
-    </div>
+    <div id="materialsList"></div>
 
 </div>
 
@@ -163,6 +170,218 @@
     <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
     <p>Learn • Connect • Excel</p>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const materialsList = document.getElementById("materialsList");
+const message = document.getElementById("message");
+const statusFilter = document.getElementById("statusFilter");
+
+let allMaterials = [];
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function(character) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[character];
+    });
+}
+
+async function checkAdminAccess() {
+
+    const { data: { user }, error: userError } =
+        await client.auth.getUser();
+
+    if (userError || !user) {
+        window.location.href = "login.html";
+        return false;
+    }
+
+    const { data: profile, error: profileError } = await client
+        .from("profiles")
+        .select("role")
+        .eq("user_id", user.id)
+        .single();
+
+    if (profileError || !profile || profile.role !== "administrator") {
+        window.location.href = "login.html";
+        return false;
+    }
+
+    return true;
+}
+
+async function loadMaterials() {
+
+    message.textContent = "Loading learning materials...";
+    materialsList.innerHTML = "";
+
+    const { data, error } = await client
+        .from("learning_materials")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        message.textContent = "Unable to load materials: " + error.message;
+        return;
+    }
+
+    allMaterials = data || [];
+
+    displayMaterials();
+}
+
+function displayMaterials() {
+
+    materialsList.innerHTML = "";
+
+    const selectedStatus = statusFilter.value;
+
+    const filteredMaterials = allMaterials.filter(material => {
+        return selectedStatus === "all" ||
+               material.status === selectedStatus;
+    });
+
+    if (filteredMaterials.length === 0) {
+        message.textContent = "No learning materials found for this status.";
+        return;
+    }
+
+    message.textContent = "Learning materials found: " + filteredMaterials.length;
+
+    filteredMaterials.forEach(material => {
+
+        const card = document.createElement("div");
+        card.className = "material-card";
+
+        card.innerHTML = `
+            <h3>${escapeHTML(material.material_title)}</h3>
+
+            <p><strong>Subject:</strong> ${escapeHTML(material.subject_name)}</p>
+
+            <p><strong>Curriculum:</strong> ${escapeHTML(material.curriculum)}</p>
+
+            <p><strong>Class / Grade:</strong> ${escapeHTML(material.grade_or_form)}</p>
+
+            <p><strong>Description:</strong> ${escapeHTML(material.description || "No description provided")}</p>
+
+            <p><strong>Date Uploaded:</strong>
+                ${material.created_at ? escapeHTML(new Date(material.created_at).toLocaleString()) : "Not available"}
+            </p>
+
+            <p><strong>Status:</strong>
+                <span class="status">${escapeHTML(material.status)}</span>
+            </p>
+
+            <button class="view-btn">Open Notes</button>
+
+            ${material.status === "pending" ? `
+                <button class="approve-btn">Approve</button>
+                <button class="reject-btn">Reject</button>
+            ` : ""}
+        `;
+
+        const viewButton = card.querySelector(".view-btn");
+
+        viewButton.addEventListener("click", () => {
+            openMaterial(material);
+        });
+
+        const approveButton = card.querySelector(".approve-btn");
+
+        if (approveButton) {
+            approveButton.addEventListener("click", () => {
+                updateMaterialStatus(material.id, "approved");
+            });
+        }
+
+        const rejectButton = card.querySelector(".reject-btn");
+
+        if (rejectButton) {
+            rejectButton.addEventListener("click", () => {
+                updateMaterialStatus(material.id, "rejected");
+            });
+        }
+
+        materialsList.appendChild(card);
+    });
+}
+
+async function openMaterial(material) {
+
+    if (!material.file_url) {
+        alert("No file is attached to this material.");
+        return;
+    }
+
+    message.textContent = "Preparing your notes...";
+
+    const { data, error } = await client.storage
+        .from("learning-notes")
+        .createSignedUrl(material.file_url, 300);
+
+    if (error) {
+        message.textContent = "Unable to open notes: " + error.message;
+        return;
+    }
+
+    message.textContent = "Opening notes...";
+
+    window.location.href = data.signedUrl;
+}
+
+async function updateMaterialStatus(id, newStatus) {
+
+    const confirmation = confirm(
+        "Are you sure you want to " + newStatus + " this material?"
+    );
+
+    if (!confirmation) return;
+
+    message.textContent = "Updating material status...";
+
+    const { error } = await client
+        .from("learning_materials")
+        .update({ status: newStatus })
+        .eq("id", id);
+
+    if (error) {
+        message.textContent = "Update failed: " + error.message;
+        return;
+    }
+
+    alert("Material " + newStatus + " successfully!");
+
+    await loadMaterials();
+}
+
+statusFilter.addEventListener("change", displayMaterials);
+
+async function startPage() {
+
+    const allowed = await checkAdminAccess();
+
+    if (!allowed) return;
+
+    await loadMaterials();
+}
+
+startPage();
+</script>
 
 </body>
 </html>
