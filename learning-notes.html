@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,7 +44,7 @@
 
         .notes-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-top: 25px;
         }
@@ -60,14 +61,37 @@
             margin-bottom: 12px;
         }
 
-        .note p {
-            line-height: 1.5;
-            margin-bottom: 12px;
+        .material {
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 15px;
         }
 
-        .status {
-            color: #b7791f;
-            font-weight: bold;
+        .material p {
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .open-btn {
+            display: inline-block;
+            background: #15345b;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .open-btn:hover {
+            background: #24558a;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
         }
 
         footer {
@@ -76,6 +100,16 @@
             text-align: center;
             padding: 20px;
             margin-top: 40px;
+        }
+
+        @media(max-width: 600px) {
+            .container {
+                padding: 25px 5%;
+            }
+
+            nav {
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -95,47 +129,13 @@
 <section class="container">
 
     <h2>My Learning Notes</h2>
-    <p>Access subject notes and revision materials.</p>
+    <p id="studentGrade">Loading your class information...</p>
 
-    <div class="notes-container">
-
-        <div class="note">
-            <h3>Mathematics</h3>
-            <p>Mathematics notes and revision materials.</p>
-            <p class="status">Notes coming soon</p>
-        </div>
-
-        <div class="note">
-            <h3>English</h3>
-            <p>Grammar, comprehension and writing notes.</p>
-            <p class="status">Notes coming soon</p>
-        </div>
-
-        <div class="note">
-            <h3>Kiswahili</h3>
-            <p>Sarufi, fasihi and lugha notes.</p>
-            <p class="status">Notes coming soon</p>
-        </div>
-
-        <div class="note">
-            <h3>Biology</h3>
-            <p>Biology topics and revision materials.</p>
-            <p class="status">Notes coming soon</p>
-        </div>
-
-        <div class="note">
-            <h3>Chemistry</h3>
-            <p>Chemistry topics and revision materials.</p>
-            <p class="status">Notes coming soon</p>
-        </div>
-
-        <div class="note">
-            <h3>Physics</h3>
-            <p>Physics topics and revision materials.</p>
-            <p class="status">Notes coming soon</p>
-        </div>
-
+    <div id="message" class="message">
+        Loading approved learning materials...
     </div>
+
+    <div class="notes-container" id="notesContainer"></div>
 
 </section>
 
@@ -143,6 +143,161 @@
     <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
     <p>Learn • Connect • Excel</p>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const container = document.getElementById("notesContainer");
+const message = document.getElementById("message");
+const studentGrade = document.getElementById("studentGrade");
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function(char) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[char];
+    });
+}
+
+async function loadLearningMaterials() {
+
+    const { data: { user }, error: authError } =
+        await client.auth.getUser();
+
+    if (authError || !user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Get the student's class or form
+    const { data: student, error: studentError } = await client
+        .from("students")
+        .select("grade_or_form")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if (studentError) {
+        message.textContent =
+            "Unable to load your student information. Please try again.";
+        return;
+    }
+
+    if (!student || !student.grade_or_form) {
+        studentGrade.textContent = "";
+        message.textContent =
+            "Your class or form has not been assigned. Please contact the administrator.";
+        return;
+    }
+
+    const grade = student.grade_or_form;
+
+    studentGrade.textContent = "Your Class: " + grade;
+
+    // Retrieve approved materials for this student's grade or form
+    const { data: materials, error: materialsError } = await client
+        .from("learning_materials")
+        .select("id, material_title, subject_name, curriculum, grade_or_form, description, file_url, created_at")
+        .eq("grade_or_form", grade)
+        .eq("status", "approved")
+        .order("created_at", { ascending: false });
+
+    if (materialsError) {
+        message.textContent =
+            "Unable to load learning materials. Please try again.";
+        return;
+    }
+
+    container.innerHTML = "";
+
+    if (!materials || materials.length === 0) {
+        message.textContent =
+            "No approved learning materials are available for your class yet.";
+        return;
+    }
+
+    message.textContent =
+        "Your approved learning materials are displayed below.";
+
+    // Organise materials by subject
+    const subjects = {};
+
+    materials.forEach(material => {
+        const subject = material.subject_name || "Other Materials";
+
+        if (!subjects[subject]) {
+            subjects[subject] = [];
+        }
+
+        subjects[subject].push(material);
+    });
+
+    Object.keys(subjects).sort().forEach(subject => {
+
+        const card = document.createElement("div");
+        card.className = "note";
+
+        card.innerHTML = `
+            <h3>${escapeHTML(subject)}</h3>
+            <p>Approved learning materials for ${escapeHTML(grade)}.</p>
+            <div class="materials-list"></div>
+        `;
+
+        const list = card.querySelector(".materials-list");
+
+        subjects[subject].forEach(material => {
+
+            const item = document.createElement("div");
+            item.className = "material";
+
+            item.innerHTML = `
+                <p><strong>${escapeHTML(material.material_title)}</strong></p>
+                <p>${escapeHTML(material.description || "")}</p>
+                <button class="open-btn" type="button">
+                    Open / Download Notes
+                </button>
+            `;
+
+            item.querySelector("button").addEventListener("click", () => {
+                openMaterial(material.file_url);
+            });
+
+            list.appendChild(item);
+        });
+
+        container.appendChild(card);
+    });
+}
+
+async function openMaterial(filePath) {
+
+    const { data, error } = await client.storage
+        .from("learning-notes")
+        .createSignedUrl(filePath, 3600, {
+            download: true
+        });
+
+    if (error || !data || !data.signedUrl) {
+        alert("Unable to open this learning material. Please try again.");
+        return;
+    }
+
+    window.location.href = data.signedUrl;
+}
+
+loadLearningMaterials();
+</script>
 
 </body>
 </html>
