@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Revision Questions - ALETECH</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background: #142d4e;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #142d4e;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 220px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 7px rgba(0,0,0,0.08);
+        }
+
+        .question-card h3 {
+            color: #142d4e;
+            margin-bottom: 12px;
+        }
+
+        .question-card p {
+            margin: 9px 0;
+            line-height: 1.5;
+        }
+
+        .status {
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .pending {
+            color: #d18a00;
+        }
+
+        .approved {
+            color: green;
+        }
+
+        .rejected {
+            color: #c62828;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            margin: 10px 8px 0 0;
+        }
+
+        .approve {
+            background: #198754;
+        }
+
+        .reject {
+            background: #dc3545;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #message {
+            margin-bottom: 18px;
+            font-weight: bold;
+        }
+
+        @media(max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+
+            select {
+                width: 100%;
+            }
+
+            .question-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Revision Questions Management</p>
+</header>
+
+<div class="container">
+
+    <h2>Manage Revision Questions</h2>
+
+    <div id="message">Checking administrator access...</div>
+
+    <div class="filters">
+        <label for="statusFilter">Filter questions:</label>
+        <select id="statusFilter">
+            <option value="all">All Questions</option>
+            <option value="pending" selected>Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+    </div>
+
+    <div id="questionsList"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const message = document.getElementById("message");
+const questionsList = document.getElementById("questionsList");
+const statusFilter = document.getElementById("statusFilter");
+
+let isAdministrator = false;
+
+async function checkAdministrator() {
+
+    const { data: authData, error: authError } =
+        await client.auth.getUser();
+
+    if (authError || !authData.user) {
+        message.textContent = "Please log in first.";
+        return;
+    }
+
+    const { data: profile, error } = await client
+        .from("profiles")
+        .select("role")
+        .eq("user_id", authData.user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "administrator") {
+        message.textContent =
+            "Access denied. Administrator account required.";
+        return;
+    }
+
+    isAdministrator = true;
+    message.textContent = "Administrator access confirmed.";
+
+    loadQuestions();
+}
+
+async function loadQuestions() {
+
+    if (!isAdministrator) return;
+
+    questionsList.innerHTML = "Loading questions...";
+
+    const selectedStatus = statusFilter.value;
+
+    let query = client
+        .from("revision_questions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (selectedStatus !== "all") {
+        query = query.eq("status", selectedStatus);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+        questionsList.textContent =
+            "Could not load questions: " + error.message;
+        return;
+    }
+
+    questionsList.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        questionsList.textContent =
+            "No revision questions found in this category.";
+        return;
+    }
+const questionIds = data.map(question => question.id);
+
+const { data: answerData, error: answerError } = await client
+    .from("revision_question_answers")
+    .select("question_id, correct_answer, explanation")
+    .in("question_id", questionIds);
+
+if (answerError) {
+    questionsList.textContent =
+        "Could not load answers: " + answerError.message;
+    return;
+}
+
+const answerMap = new Map(
+    (answerData || []).map(item => [item.question_id, item])
+);
+    data.forEach(question => {
+
+        const card = document.createElement("div");
+        card.className = "question-card";
+
+        const title = document.createElement("h3");
+        title.textContent = question.question_title || "Untitled Question";
+
+        const details = document.createElement("p");
+        details.textContent =
+            "Subject: " + question.subject_name +
+            " | Grade: " + question.grade_or_form +
+            " | Curriculum: " + question.curriculum;
+
+        const questionText = document.createElement("p");
+        questionText.textContent = "Question: " + question.question_text;
+
+        const type = document.createElement("p");
+        type.textContent = "Type: " + question.question_type;
+
+        const options = document.createElement("div");
+
+        if (question.question_type === "multiple_choice") {
+            ["a", "b", "c", "d"].forEach(letter => {
+                const option = document.createElement("p");
+                const value = question["option_" + letter];
+
+                if (value) {
+                    option.textContent =
+                        letter.toUpperCase() + ": " + value;
+                    options.appendChild(option);
+                }
+            });
+        }
+
+        const savedAnswer = answerMap.get(question.id);
+
+const answer = document.createElement("p");
+answer.textContent =
+    "Correct answer / Suggested answer: " +
+    (savedAnswer?.correct_answer || "Not provided");
+
+const explanation = document.createElement("p");
+explanation.textContent =
+    "Explanation: " + (savedAnswer?.explanation || "None provided");
+
+        const status = document.createElement("p");
+        status.className = "status " + question.status;
+        status.textContent = "Status: " + question.status;
+
+        card.append(
+            title,
+            details,
+            questionText,
+            type,
+            options,
+            answer,
+            explanation,
+            status
+        );
+
+        if (question.status === "pending") {
+
+            const approveButton = document.createElement("button");
+            approveButton.className = "approve";
+            approveButton.textContent = "Approve";
+
+            approveButton.addEventListener("click", () => {
+                updateStatus(question.id, "approved");
+            });
+
+            const rejectButton = document.createElement("button");
+            rejectButton.className = "reject";
+            rejectButton.textContent = "Reject";
+
+            rejectButton.addEventListener("click", () => {
+                updateStatus(question.id, "rejected");
+            });
+
+            card.append(approveButton, rejectButton);
+        }
+
+        questionsList.appendChild(card);
+    });
+}
+
+async function updateStatus(id, newStatus) {
+
+    const confirmed = confirm(
+        "Are you sure you want to " + newStatus + " this question?"
+    );
+
+    if (!confirmed) return;
+
+    const { error } = await client
+        .from("revision_questions")
+        .update({ status: newStatus })
+        .eq("id", id);
+
+    if (error) {
+        alert("Update failed: " + error.message);
+        return;
+    }
+
+    alert("Revision question " + newStatus + " successfully!");
+
+    loadQuestions();
+}
+
+statusFilter.addEventListener("change", loadQuestions);
+
+checkAdministrator();
+
+</script>
+
+</body>
+</html>

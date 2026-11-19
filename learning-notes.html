@@ -183,10 +183,10 @@ async function loadLearningMaterials() {
 
     // Get the student's class or form
     const { data: student, error: studentError } = await client
-        .from("students")
-        .select("grade_or_form")
-        .eq("user_id", user.id)
-        .maybeSingle();
+    .from("students")
+    .select("grade_or_form, curriculum")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
     if (studentError) {
         message.textContent =
@@ -202,22 +202,27 @@ async function loadLearningMaterials() {
     }
 
     const grade = student.grade_or_form;
+    const curriculum = student.curriculum;
 
     studentGrade.textContent = "Your Class: " + grade;
 
     // Retrieve approved materials for this student's grade or form
     const { data: materials, error: materialsError } = await client
-        .from("learning_materials")
-        .select("id, material_title, subject_name, curriculum, grade_or_form, description, file_url, created_at")
-        .eq("grade_or_form", grade)
-        .eq("status", "approved")
-        .order("created_at", { ascending: false });
+    .from("learning_materials")
+    .select("id, material_title, subject_name, curriculum, grade_or_form, description, file_url, created_at")
+    .eq("grade_or_form", grade)
+    .eq("curriculum", curriculum)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false });
 
-    if (materialsError) {
-        message.textContent =
-            "Unable to load learning materials. Please try again.";
-        return;
-    }
+    console.log("Student details:", student);
+console.log("Materials returned:", materials);
+console.log("Materials error:", materialsError);
+
+if (materialsError) {
+    message.textContent = materialsError.message;
+    return;
+}
 
     container.innerHTML = "";
 

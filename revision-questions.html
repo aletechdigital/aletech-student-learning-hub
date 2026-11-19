@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Revision Questions - ALETECH</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        header {
+            background: #12345a;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin-bottom: 8px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .question-card h3 {
+            color: #12345a;
+            margin-bottom: 12px;
+        }
+
+        .question-card p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .option {
+            background: #f1f4f8;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 5px;
+        }
+
+        #message {
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .subject {
+            color: #176b45;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>ALETECH STUDENT LEARNING HUB</h1>
+        <p>Student Revision Questions</p>
+    </header>
+
+    <div id="message">Loading revision questions...</div>
+
+    <div id="questionsList"></div>
+
+</div>
+
+<script>
+    const SUPABASE_URL =
+        "https://pshincksginxlcgyqhrg.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+    const client = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+    const message = document.getElementById("message");
+    const questionsList = document.getElementById("questionsList");
+
+
+    async function loadStudentQuestions() {
+
+        message.textContent = "Checking student account...";
+
+        const { data: authData, error: authError } =
+            await client.auth.getUser();
+
+        if (authError || !authData.user) {
+            message.textContent =
+                "Please log in using your student account first.";
+            return;
+        }
+
+        const user = authData.user;
+
+        const { data: profile, error: profileError } = await client
+            .from("profiles")
+            .select("role")
+            .eq("user_id", user.id)
+            .single();
+
+        if (
+            profileError ||
+            !profile ||
+            profile.role !== "student"
+        ) {
+            message.textContent =
+                "Access denied. Student account required.";
+            return;
+        }
+
+        message.textContent =
+            "Student account confirmed. Loading your questions...";
+
+
+        const { data: student, error: studentError } = await client
+            .from("students")
+            .select("curriculum, grade_or_form")
+            .eq("user_id", user.id)
+            .single();
+
+        if (studentError || !student) {
+            message.textContent =
+                "Student details could not be found. Please contact the administrator.";
+            return;
+        }
+
+
+        const { data: questions, error: questionsError } = await client
+            .from("revision_questions")
+            .select(`
+                id,
+                question_title,
+                question_text,
+                subject_name,
+                curriculum,
+                grade_or_form,
+                question_type,
+                option_a,
+                option_b,
+                option_c,
+                option_d
+            `)
+            .eq("status", "approved")
+            .eq("curriculum", student.curriculum)
+            .eq("grade_or_form", student.grade_or_form)
+            .order("created_at", { ascending: false });
+
+
+        if (questionsError) {
+            message.textContent =
+                "Could not load questions: " +
+                questionsError.message;
+            return;
+        }
+
+        questionsList.innerHTML = "";
+
+        if (!questions || questions.length === 0) {
+            message.textContent =
+                "No approved revision questions are available for your class yet.";
+            return;
+        }
+
+        message.textContent =
+            questions.length + " revision question(s) available.";
+
+        questions.forEach((question, index) => {
+
+            const card = document.createElement("div");
+            card.className = "question-card";
+
+            const title = document.createElement("h3");
+            title.textContent =
+                (index + 1) + ". " +
+                (question.question_title || "Revision Question");
+
+            const subject = document.createElement("p");
+            subject.className = "subject";
+            subject.textContent =
+                "Subject: " + question.subject_name;
+
+            const questionText = document.createElement("p");
+            questionText.textContent = question.question_text;
+
+            card.append(title, subject, questionText);
+
+            if (question.question_type === "multiple_choice") {
+
+    const options = document.createElement("div");
+
+    ["a", "b", "c", "d"].forEach(letter => {
+
+        const value = question["option_" + letter];
+
+        if (value) {
+            const label = document.createElement("label");
+            label.className = "option";
+            label.style.display = "block";
+            label.style.cursor = "pointer";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "answer_" + question.id;
+            radio.value = letter.toUpperCase();
+
+            label.append(
+                radio,
+                document.createTextNode(
+                    " " + letter.toUpperCase() + ". " + value
+                )
+            );
+
+            options.appendChild(label);
+        }
+
+    });
+
+    card.appendChild(options);
+
+} else {
+
+    const answerBox = document.createElement("textarea");
+    answerBox.placeholder = "Type your answer here...";
+    answerBox.rows = 5;
+    answerBox.style.width = "100%";
+    answerBox.style.padding = "12px";
+
+    card.appendChild(answerBox);
+
+}
+
+const submitButton = document.createElement("button");
+submitButton.textContent = "Submit Answer";
+submitButton.style.padding = "12px 20px";
+submitButton.style.marginTop = "15px";
+submitButton.style.background = "#12345a";
+submitButton.style.color = "white";
+submitButton.style.border = "none";
+submitButton.style.cursor = "pointer";
+
+const result = document.createElement("p");
+result.style.marginTop = "12px";
+
+submitButton.addEventListener("click", async () => {
+
+    let answer = "";
+
+    if (question.question_type === "multiple_choice") {
+
+        const selected = card.querySelector(
+            'input[name="answer_' + question.id + '"]:checked'
+        );
+
+        if (!selected) {
+            result.textContent = "Please select an answer.";
+            return;
+        }
+
+        answer = selected.value;
+
+    } else {
+
+        answer = answerBox.value.trim();
+
+        if (!answer) {
+            result.textContent = "Please type your answer.";
+            return;
+        }
+
+    }
+
+    submitButton.disabled = true;
+    result.textContent = "Submitting your answer...";
+
+    const { data, error } = await client.rpc(
+        "submit_revision_answer",
+        {
+            p_question_id: question.id,
+            p_student_answer: answer
+        }
+    );
+
+    if (error) {
+        result.textContent = "Submission failed: " + error.message;
+        submitButton.disabled = false;
+        return;
+    }
+
+    if (question.question_type === "multiple_choice") {
+        result.textContent = data
+            ? "Correct! Well done."
+            : "Incorrect. Keep practising.";
+    } else {
+        result.textContent =
+            "Your written answer has been submitted for marking.";
+    }
+
+});
+
+card.append(submitButton, result);
+
+                        options.appendChild(option);
+                    }
+
+                });
+
+                card.appendChild(options);
+            }
+
+            questionsList.appendChild(card);
+
+        });
+
+    }
+
+
+    loadStudentQuestions().catch(error => {
+        console.error("Revision page error:", error);
+        message.textContent =
+            "Something went wrong: " + error.message;
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Revision Questions - ALETECH</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: #15345b;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        nav {
+            background: #102947;
+            padding: 15px;
+            text-align: right;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .container {
+            padding: 35px 7%;
+        }
+
+        .upload-form {
+            background: white;
+            padding: 25px;
+            max-width: 750px;
+            margin: 25px auto;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        button {
+            background: #15345b;
+            color: white;
+            padding: 13px 22px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 22px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .notice {
+            margin-top: 20px;
+            color: #765b19;
+            line-height: 1.5;
+        }
+
+        .question-section {
+            display: none;
+        }
+
+        footer {
+            background: #15345b;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 4%;
+            }
+
+            .upload-form {
+                padding: 18px;
+            }
+
+            nav {
+                text-align: center;
+            }
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://pshincksginxlcgyqhrg.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_ya_77Xgh4bIkH7poWYBwKw_RXe9JVcm";
+
+        const client = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+    </script>
+</head>
+
+<body>
+
+<header>
+    <h1>ALETECH STUDENT LEARNING HUB</h1>
+    <p>Revision Questions Management</p>
+</header>
+
+<nav>
+    <a href="teacher-dashboard.html">Dashboard</a>
+    <a href="index.html">Home</a>
+</nav>
+
+<section class="container">
+
+    <h2>Upload Revision Questions</h2>
+    <p>Prepare revision exercises to help students practise and improve.</p>
+
+    <div class="upload-form">
+
+        <form id="revisionForm">
+
+            <label>Question Title / Topic</label>
+            <input type="text" id="question_title"
+                   placeholder="e.g. Genetics Revision" required>
+
+            <label>Subject</label>
+            <select id="subject_name" required>
+                <option value="">Select Subject</option>
+                <option>Mathematics</option>
+                <option>English</option>
+                <option>Kiswahili</option>
+                <option>Biology</option>
+                <option>Chemistry</option>
+                <option>Physics</option>
+            </select>
+
+            <label>Curriculum</label>
+            <select id="curriculum" required>
+                <option value="">Select Curriculum</option>
+                <option>Kenyan 8-4-4 Curriculum</option>
+                <option>Kenyan CBC Curriculum</option>
+            </select>
+
+            <label>Class / Grade</label>
+            <select id="grade_or_form" required>
+                <option value="">Select Class</option>
+                <option>Grade 10</option>
+                <option>Grade 11</option>
+                <option>Grade 12</option>
+                <option>Form 1</option>
+                <option>Form 2</option>
+                <option>Form 3</option>
+                <option>Form 4</option>
+            </select>
+
+            <label>Question Type</label>
+            <select id="question_type" required>
+                <option value="multiple_choice">Multiple Choice</option>
+                <option value="written">Written Answer</option>
+            </select>
+
+            <label>Question</label>
+            <textarea id="question_text"
+                      placeholder="Enter your question here..."
+                      required></textarea>
+
+            <div id="multipleChoiceSection" class="question-section">
+
+                <label>Option A</label>
+                <input type="text" id="option_a"
+                       placeholder="Enter option A">
+
+                <label>Option B</label>
+                <input type="text" id="option_b"
+                       placeholder="Enter option B">
+
+                <label>Option C</label>
+                <input type="text" id="option_c"
+                       placeholder="Enter option C">
+
+                <label>Option D</label>
+                <input type="text" id="option_d"
+                       placeholder="Enter option D">
+
+            </div>
+
+            <div id="writtenSection" class="question-section">
+
+                <label>Suggested Answer / Marking Guide</label>
+                <textarea id="written_answer"
+                          placeholder="Enter the expected answer or marking guide"></textarea>
+
+            </div>
+
+            <div id="multipleChoiceAnswer" class="question-section">
+
+                <label>Correct Answer</label>
+                <select id="correct_answer">
+                    <option value="">Select Correct Answer</option>
+                    <option value="A">Option A</option>
+                    <option value="B">Option B</option>
+                    <option value="C">Option C</option>
+                    <option value="D">Option D</option>
+                </select>
+
+            </div>
+
+            <label>Explanation</label>
+            <textarea id="explanation"
+                      placeholder="Explain the answer to help students understand"></textarea>
+
+            <button type="submit" id="submitButton">
+                Submit Revision Question
+            </button>
+
+        </form>
+
+        <p class="notice">
+            All submitted revision questions will remain pending
+            until approved by the administrator.
+        </p>
+
+        <p id="message"></p>
+
+    </div>
+
+</section>
+
+<footer>
+    <p>&copy; 2026 ALETECH STUDENT LEARNING HUB</p>
+    <p>Learn • Connect • Excel</p>
+</footer>
+
+<script>
+
+const questionType = document.getElementById("question_type");
+
+const multipleChoiceSection =
+    document.getElementById("multipleChoiceSection");
+
+const writtenSection =
+    document.getElementById("writtenSection");
+
+const multipleChoiceAnswer =
+    document.getElementById("multipleChoiceAnswer");
+
+function updateQuestionType() {
+
+    const type = questionType.value;
+
+    if (type === "multiple_choice") {
+
+        multipleChoiceSection.style.display = "block";
+        multipleChoiceAnswer.style.display = "block";
+        writtenSection.style.display = "none";
+
+        document.getElementById("option_a").required = true;
+        document.getElementById("option_b").required = true;
+        document.getElementById("option_c").required = true;
+        document.getElementById("option_d").required = true;
+        document.getElementById("correct_answer").required = true;
+
+        document.getElementById("written_answer").required = false;
+
+    } else {
+
+        multipleChoiceSection.style.display = "none";
+        multipleChoiceAnswer.style.display = "none";
+        writtenSection.style.display = "block";
+
+        document.getElementById("option_a").required = false;
+        document.getElementById("option_b").required = false;
+        document.getElementById("option_c").required = false;
+        document.getElementById("option_d").required = false;
+        document.getElementById("correct_answer").required = false;
+
+        document.getElementById("written_answer").required = true;
+    }
+}
+
+questionType.addEventListener("change", updateQuestionType);
+
+updateQuestionType();
+
+
+document.getElementById("revisionForm")
+.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const button = document.getElementById("submitButton");
+    const message = document.getElementById("message");
+
+    button.disabled = true;
+    button.textContent = "Submitting...";
+    message.textContent = "";
+
+    try {
+
+        // Check logged-in user
+
+        const { data: { user }, error: authError } =
+            await client.auth.getUser();
+
+        if (authError || !user) {
+            throw new Error("Please log in before submitting questions.");
+        }
+
+        // Confirm teacher role
+
+        const { data: profile, error: profileError } = await client
+            .from("profiles")
+            .select("role")
+            .eq("user_id", user.id)
+            .single();
+
+        if (profileError || !profile || profile.role !== "teacher") {
+            throw new Error("Only registered teachers can upload revision questions.");
+        }
+
+        // Collect question details
+
+        const type = questionType.value;
+
+        const title = document.getElementById("question_title").value.trim();
+        const subject = document.getElementById("subject_name").value;
+        const curriculum = document.getElementById("curriculum").value;
+        const grade = document.getElementById("grade_or_form").value;
+        const question = document.getElementById("question_text").value.trim();
+        const explanation = document.getElementById("explanation").value.trim();
+
+        let optionA = null;
+        let optionB = null;
+        let optionC = null;
+        let optionD = null;
+        let answer = null;
+
+        if (type === "multiple_choice") {
+
+            optionA = document.getElementById("option_a").value.trim();
+            optionB = document.getElementById("option_b").value.trim();
+            optionC = document.getElementById("option_c").value.trim();
+            optionD = document.getElementById("option_d").value.trim();
+            answer = document.getElementById("correct_answer").value;
+
+            if (!optionA || !optionB || !optionC || !optionD || !answer) {
+                throw new Error("Please complete all four options and select the correct answer.");
+            }
+
+        } else {
+
+            answer = document.getElementById("written_answer").value.trim();
+
+            if (!answer) {
+                throw new Error("Please enter the suggested answer or marking guide.");
+            }
+        }
+
+        // Save question without exposing the correct answer
+const { data: savedQuestion, error: insertError } = await client
+    .from("revision_questions")
+    .insert({
+        question_title: title,
+        question_text: question,
+        subject_name: subject,
+        curriculum: curriculum,
+        grade_or_form: grade,
+        question_type: type,
+        option_a: optionA,
+        option_b: optionB,
+        option_c: optionC,
+        option_d: optionD,
+        created_by: user.id,
+        status: "pending"
+    })
+    .select("id")
+    .single();
+
+if (insertError) {
+    throw insertError;
+}
+
+// Save the correct answer separately
+const { error: answerError } = await client
+    .from("revision_question_answers")
+    .insert({
+        question_id: savedQuestion.id,
+        correct_answer: answer,
+        explanation: explanation
+    });
+
+if (answerError) {
+    throw new Error(
+        "Question was saved, but its answer could not be saved: " +
+        answerError.message
+    );
+}
+
+        message.style.color = "green";
+        message.textContent =
+            "Revision question submitted successfully. It is awaiting administrator approval.";
+
+        document.getElementById("revisionForm").reset();
+
+        updateQuestionType();
+
+    } catch (error) {
+
+        console.error("Revision upload error:", error);
+
+        message.style.color = "red";
+        message.textContent = "Submission failed: " + error.message;
+
+    } finally {
+
+        button.disabled = false;
+        button.textContent = "Submit Revision Question";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
