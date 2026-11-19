@@ -76,6 +76,16 @@
             color: #176b45;
             font-weight: bold;
         }
+
+        textarea {
+            font-family: Arial, sans-serif;
+            margin-top: 10px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -197,6 +207,7 @@
         message.textContent =
             questions.length + " revision question(s) available.";
 
+
         questions.forEach((question, index) => {
 
             const card = document.createElement("div");
@@ -217,224 +228,146 @@
 
             card.append(title, subject, questionText);
 
+
+            // Answer box must be declared before the question type check.
+            let answerBox = null;
+
+
+            // DISPLAY MULTIPLE-CHOICE OR WRITTEN QUESTION
+
             if (question.question_type === "multiple_choice") {
 
-    const options = document.createElement("div");
+                const options = document.createElement("div");
 
-    ["a", "b", "c", "d"].forEach(letter => {
+                ["a", "b", "c", "d"].forEach(letter => {
 
-        const value = question["option_" + letter];
+                    const value = question["option_" + letter];
 
-        if (value) {
-            const label = document.createElement("label");
-            label.className = "option";
-            label.style.display = "block";
-            label.style.cursor = "pointer";
+                    if (value) {
+                        const label = document.createElement("label");
+                        label.className = "option";
+                        label.style.display = "block";
+                        label.style.cursor = "pointer";
 
-            const radio = document.createElement("input");
-            radio.type = "radio";
-            radio.name = "answer_" + question.id;
-            radio.value = letter.toUpperCase();
+                        const radio = document.createElement("input");
+                        radio.type = "radio";
+                        radio.name = "answer_" + question.id;
+                        radio.value = letter.toUpperCase();
 
-            label.append(
-                radio,
-                document.createTextNode(
-                    " " + letter.toUpperCase() + ". " + value
-                )
-            );
+                        label.append(
+                            radio,
+                            document.createTextNode(
+                                " " + letter.toUpperCase() + ". " + value
+                            )
+                        );
 
-            options.appendChild(label);
-        }
+                        options.appendChild(label);
+                    }
 
-    });
+                });
 
-    card.appendChild(options);
+                card.appendChild(options);
 
-} else {
+            } else {
 
-    const answerBox = document.createElement("textarea");
-    answerBox.placeholder = "Type your answer here...";
-    answerBox.rows = 5;
-    answerBox.style.width = "100%";
-    answerBox.style.padding = "12px";
+                answerBox = document.createElement("textarea");
+                answerBox.placeholder = "Type your answer here...";
+                answerBox.rows = 5;
+                answerBox.style.width = "100%";
+                answerBox.style.padding = "12px";
 
-    card.appendChild(answerBox);
+                card.appendChild(answerBox);
 
-}
+            }
 
-const submitButton = document.createElement("button");
-submitButton.textContent = "Submit Answer";
-submitButton.style.padding = "12px 20px";
-submitButton.style.marginTop = "15px";
-submitButton.style.background = "#12345a";
-submitButton.style.color = "white";
-submitButton.style.border = "none";
-submitButton.style.cursor = "pointer";
 
-const result = document.createElement("p");
-result.style.marginTop = "12px";
+            // SUBMIT BUTTON
 
-submitButton.addEventListener("click", async () => {
+            const submitButton = document.createElement("button");
+            submitButton.textContent = "Submit Answer";
+            submitButton.style.padding = "12px 20px";
+            submitButton.style.marginTop = "15px";
+            submitButton.style.background = "#12345a";
+            submitButton.style.color = "white";
+            submitButton.style.border = "none";
+            submitButton.style.cursor = "pointer";
 
-    let answer = "";
+            const result = document.createElement("p");
+            result.style.marginTop = "12px";
 
-    if (question.question_type === "multiple_choice") {
 
-        const selected = card.querySelector(
-            'input[name="answer_' + question.id + '"]:checked'
-        );
+            // SUBMIT STUDENT ANSWER
 
-        if (!selected) {
-            result.textContent = "Please select an answer.";
-            return;
-        }
+            submitButton.addEventListener("click", async () => {
 
-        answer = selected.value;
+                let answer = "";
 
-    } else {
+                if (question.question_type === "multiple_choice") {
 
-        answer = answerBox.value.trim();
+                    const selected = card.querySelector(
+                        'input[name="answer_' + question.id + '"]:checked'
+                    );
 
-        if (!answer) {
-            result.textContent = "Please type your answer.";
-            return;
-        }
+                    if (!selected) {
+                        result.textContent = "Please select an answer.";
+                        return;
+                    }
 
-    }
+                    answer = selected.value;
 
-    submitButton.disabled = true;
-    result.textContent = "Submitting your answer...";
+                } else {
 
-    const { data, error } = await client.rpc(
-        "submit_revision_answer",
-        {
-            p_question_id: question.id,
-            p_student_answer: answer
-        }
-    );
+                    answer = answerBox.value.trim();
 
-    if (error) {
-        result.textContent = "Submission failed: " + error.message;
-        submitButton.disabled = false;
-        return;
-    }
+                    if (!answer) {
+                        result.textContent = "Please type your answer.";
+                        return;
+                    }
 
-    let answerBox = null;
+                }
 
-if (question.question_type === "multiple_choice") {
 
-    const options = document.createElement("div");
+                submitButton.disabled = true;
+                result.textContent = "Submitting your answer...";
 
-    ["a", "b", "c", "d"].forEach(letter => {
 
-        const value = question["option_" + letter];
+                const { data, error } = await client.rpc(
+                    "submit_revision_answer",
+                    {
+                        p_question_id: question.id,
+                        p_student_answer: answer
+                    }
+                );
 
-        if (value) {
-            const label = document.createElement("label");
-            label.className = "option";
-            label.style.display = "block";
-            label.style.cursor = "pointer";
 
-            const radio = document.createElement("input");
-            radio.type = "radio";
-            radio.name = "answer_" + question.id;
-            radio.value = letter.toUpperCase();
+                if (error) {
+                    result.textContent =
+                        "Submission failed: " + error.message;
 
-            label.append(
-                radio,
-                document.createTextNode(
-                    " " + letter.toUpperCase() + ". " + value
-                )
-            );
+                    submitButton.disabled = false;
+                    return;
+                }
 
-            options.appendChild(label);
-        }
 
-    });
+                // DISPLAY RESULT
 
-    card.appendChild(options);
+                if (question.question_type === "multiple_choice") {
 
-} else {
+                    result.textContent = data
+                        ? "Correct! Well done."
+                        : "Incorrect. Keep practising.";
 
-    answerBox = document.createElement("textarea");
-    answerBox.placeholder = "Type your answer here...";
-    answerBox.rows = 5;
-    answerBox.style.width = "100%";
-    answerBox.style.padding = "12px";
+                } else {
 
-    card.appendChild(answerBox);
+                    result.textContent =
+                        "Your written answer has been submitted for marking.";
 
-}
+                }
 
-const submitButton = document.createElement("button");
-submitButton.textContent = "Submit Answer";
-submitButton.style.padding = "12px 20px";
-submitButton.style.marginTop = "15px";
-submitButton.style.background = "#12345a";
-submitButton.style.color = "white";
-submitButton.style.border = "none";
-submitButton.style.cursor = "pointer";
+            });
 
-const result = document.createElement("p");
-result.style.marginTop = "12px";
 
-submitButton.addEventListener("click", async () => {
-
-    let answer = "";
-
-    if (question.question_type === "multiple_choice") {
-
-        const selected = card.querySelector(
-            'input[name="answer_' + question.id + '"]:checked'
-        );
-
-        if (!selected) {
-            result.textContent = "Please select an answer.";
-            return;
-        }
-
-        answer = selected.value;
-
-    } else {
-
-        answer = answerBox.value.trim();
-
-        if (!answer) {
-            result.textContent = "Please type your answer.";
-            return;
-        }
-
-    }
-
-    submitButton.disabled = true;
-    result.textContent = "Submitting your answer...";
-
-    const { data, error } = await client.rpc(
-        "submit_revision_answer",
-        {
-            p_question_id: question.id,
-            p_student_answer: answer
-        }
-    );
-
-    if (error) {
-        result.textContent = "Submission failed: " + error.message;
-        submitButton.disabled = false;
-        return;
-    }
-
-    if (question.question_type === "multiple_choice") {
-        result.textContent = data
-            ? "Correct! Well done."
-            : "Incorrect. Keep practising.";
-    } else {
-        result.textContent =
-            "Your written answer has been submitted for marking.";
-    }
-
-});
-
-card.append(submitButton, result);
+            card.append(submitButton, result);
 
             questionsList.appendChild(card);
 
@@ -445,6 +378,7 @@ card.append(submitButton, result);
 
     loadStudentQuestions().catch(error => {
         console.error("Revision page error:", error);
+
         message.textContent =
             "Something went wrong: " + error.message;
     });
